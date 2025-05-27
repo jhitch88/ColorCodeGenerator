@@ -1,0 +1,122 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.frame-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+    background-size: 300% 300%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.preview-section {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 30px 0;
+    text-align: left;
+}
+
+.preview-section h2 {
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.preview-section ol {
+    color: #666;
+    line-height: 1.8;
+}
+
+.preview-section li {
+    margin-bottom: 10px;
+}
+
+.demo-section {
+    background: rgba(102, 126, 234, 0.1);
+    border: 2px solid #667eea;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 30px 0;
+}
+
+.demo-section h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.demo-link {
+    display: inline-block;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.demo-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.farcaster-info {
+    background: rgba(247, 147, 251, 0.1);
+    border: 2px solid #f093fb;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 30px 0;
+    text-align: left;
+}
+
+.farcaster-info h3 {
+    color: #f093fb;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.farcaster-info p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .frame-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+}

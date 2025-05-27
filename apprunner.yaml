@@ -1,0 +1,15 @@
+version: 1.0
+runtime: nodejs18
+build:
+  commands:
+    build:
+      - npm install
+run:
+  runtime-version: 18.x
+  command: npm start
+  network:
+    port: $PORT
+    env: PORT
+  env:
+    - name: NODE_ENV
+      value: production

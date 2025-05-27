@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word to Hex Color Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="gradient-title">Word to Hex Generator</h1>
+    <p class="subtitle">Transform any word or name into a unique hex color code</p>
+    
+    <div class="input-section">
+      <div class="input-container">
+        <input type="text" id="word-input" placeholder="Enter a word or name..." maxlength="50">
+        <button id="generate-btn">Generate Color</button>
+      </div>
+    </div>
+
+    <div class="result-section" id="result-section">
+      <div class="color-display" id="color-display">
+        <div class="color-preview" id="color-preview"></div>
+        <div class="color-info">
+          <h2 class="word-display" id="word-display">Your Word</h2>
+          <div class="hex-code" id="hex-code">#000000</div>
+          <div class="color-values">
+            <div class="rgb-values" id="rgb-values">RGB: 0, 0, 0</div>
+            <div class="hsl-values" id="hsl-values">HSL: 0°, 0%, 0%</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button id="copy-hex-btn" class="action-btn">
+          <span class="btn-text">Copy Hex</span>
+          <span class="btn-feedback">Copied!</span>
+        </button>
+        <button id="copy-rgb-btn" class="action-btn">
+          <span class="btn-text">Copy RGB</span>
+          <span class="btn-feedback">Copied!</span>
+        </button>
+        <button id="randomize-btn" class="action-btn secondary">Generate Random</button>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3>How it works</h3>
+      <p>Each word or name generates a unique color using a mathematical hash function. The same word will always produce the same color, making it perfect for consistent color schemes, avatars, or design projects.</p>
+      
+      <div class="examples">
+        <h4>Try these examples:</h4>
+        <div class="example-words">
+          <button class="example-word" data-word="Rainbow">Rainbow</button>
+          <button class="example-word" data-word="Ocean">Ocean</button>
+          <button class="example-word" data-word="Sunset">Sunset</button>
+          <button class="example-word" data-word="Forest">Forest</button>
+          <button class="example-word" data-word="Galaxy">Galaxy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent-colors" id="recent-colors">
+      <h3>Recent Colors</h3>
+      <div class="color-history" id="color-history"></div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+
+</html>
