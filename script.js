@@ -4,14 +4,13 @@ class ColorGenerator {
         this.bindEvents();
         this.colorHistory = this.loadHistory();
         this.updateHistoryDisplay();
-    }
-
-    initializeElements() {
+    }    initializeElements() {
         this.wordInput = document.getElementById('word-input');
         this.generateBtn = document.getElementById('generate-btn');
         this.resultSection = document.getElementById('result-section');
         this.colorPreview = document.getElementById('color-preview');
         this.wordDisplay = document.getElementById('word-display');
+        this.colorName = document.getElementById('color-name');
         this.hexCode = document.getElementById('hex-code');
         this.rgbValues = document.getElementById('rgb-values');
         this.hslValues = document.getElementById('hsl-values');
@@ -63,17 +62,64 @@ class ColorGenerator {
         setTimeout(() => {
             this.wordInput.style.animation = '';
         }, 500);
-    }
-
-    generateColor(word) {
+    }    async generateColor(word) {
         const hash = this.hashString(word);
         const color = this.hashToColor(hash);
         const rgb = this.hexToRgb(color);
         const hsl = this.rgbToHsl(rgb.r, rgb.g, rgb.b);
         
+        // Show loading state for color name
+        this.colorName.textContent = '✨ Generating creative name...';
+        this.colorName.className = 'color-name loading';
+        
         this.displayColor(word, color, rgb, hsl);
         this.addToHistory(word, color);
         this.showResult();
+        
+        // Fetch AI-generated color name
+        this.fetchColorName(word, color, rgb);
+    }
+
+    async fetchColorName(word, hexColor, rgb) {
+        try {
+            const response = await fetch(`/api/color-name`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    word,
+                    hexColor,
+                    rgb
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.colorName.textContent = `"${data.colorName}"`;
+                this.colorName.className = 'color-name loaded';
+            } else {
+                // Fallback to local generation
+                this.generateFallbackColorName(word, hexColor);
+            }
+        } catch (error) {
+            console.log('AI color name generation failed, using fallback');
+            this.generateFallbackColorName(word, hexColor);
+        }
+    }
+
+    generateFallbackColorName(word, hexColor) {
+        const fallbackNames = [
+            "Mystic Shade", "Cosmic Hue", "Dream Tint", "Stellar Glow", 
+            "Nebula Touch", "Prism Echo", "Velvet Tone", "Aurora Whisper",
+            "Crystal Gleam", "Twilight Mist", "Ocean Deep", "Forest Dawn"
+        ];
+        
+        const hash = parseInt(hexColor.substring(1), 16);
+        const fallbackName = fallbackNames[hash % fallbackNames.length];
+        
+        this.colorName.textContent = `"${fallbackName}"`;
+        this.colorName.className = 'color-name loaded';
     }
 
     hashString(str) {

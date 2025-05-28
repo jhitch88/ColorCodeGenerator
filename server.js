@@ -4,6 +4,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.gemini_API;
 
 // Helper function to get base URL
 function getBaseUrl(req) {
@@ -53,7 +54,7 @@ function hexToRgb(hex) {
 }
 
 // Generate frame image
-async function generateFrameImage(word, hexColor, rgb) {
+async function generateFrameImage(word, hexColor, rgb, colorName = null) {
     const width = 1200;
     const height = 630;
     
@@ -114,10 +115,15 @@ async function generateFrameImage(word, hexColor, rgb) {
     }
     
     // Add hex code text
-    image.print(fontMedium, 480, 320, hexColor.toUpperCase());
+    image.print(fontMedium, 480, 300, hexColor.toUpperCase());
+    
+    // Add AI-generated color name if available
+    if (colorName) {
+        image.print(fontSmall, 480, 340, `"${colorName}"`);
+    }
     
     // Add RGB text
-    image.print(fontSmall, 480, 360, `RGB: ${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}`);
+    image.print(fontSmall, 480, 370, `RGB: ${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}`);
     
     // Add instructions
     image.print(fontSmall, 0, 480, {
@@ -127,6 +133,87 @@ async function generateFrameImage(word, hexColor, rgb) {
     }, width);
     
     return await image.getBufferAsync(Jimp.MIME_PNG);
+}
+
+// Gemini API function
+async function callGeminiAPI(prompt) {
+    if (!GEMINI_API_KEY) {
+        console.warn('Gemini API key not found, using fallback color names');
+        return null;
+    }
+
+    const modelId = "gemini-2.0-flash";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${GEMINI_API_KEY}`;
+
+    const requestData = {
+        contents: [
+            {
+                role: "user",
+                parts: [
+                    {
+                        text: prompt
+                    }
+                ]
+            }
+        ],
+        generationConfig: {
+            responseMimeType: "text/plain",
+            maxOutputTokens: 50,
+            temperature: 0.9
+        }
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorData)}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.candidates &&
+            responseData.candidates[0] &&
+            responseData.candidates[0].content &&
+            responseData.candidates[0].content.parts &&
+            responseData.candidates[0].content.parts[0]) {
+            return responseData.candidates[0].content.parts[0].text.trim();
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("Error calling Gemini API:", error);
+        return null;
+    }
+}
+
+// Generate a creative color name using Gemini AI
+async function generateColorName(hexColor, inputWord, rgb) {
+    const prompt = `Given this hex color ${hexColor} (RGB: ${rgb.r}, ${rgb.g}, ${rgb.b}) that was generated from the word "${inputWord}", create a single creative and poetic color name (1-2 words max). The name should capture the essence of both the color and the original word. Examples: "Midnight Ocean", "Coral Whisper", "Forest Echo". Only return the color name, nothing else.`;
+    
+    const aiColorName = await callGeminiAPI(prompt);
+    
+    if (aiColorName) {
+        // Clean up the response (remove quotes, extra whitespace, etc.)
+        return aiColorName.replace(/['"]/g, '').trim();
+    }
+    
+    // Fallback color names if AI fails
+    const fallbackNames = [
+        "Mystic Shade", "Cosmic Hue", "Dream Tint", "Stellar Glow", 
+        "Nebula Touch", "Prism Echo", "Velvet Tone", "Aurora Whisper",
+        "Crystal Gleam", "Twilight Mist", "Ocean Deep", "Forest Dawn"
+    ];
+    
+    const hash = parseInt(hexColor.substring(1), 16);
+    return fallbackNames[hash % fallbackNames.length];
 }
 
 // Routes
@@ -203,7 +290,10 @@ app.get('/api/frame-image/:word?', async (req, res) => {
         const hexColor = hashToColor(hash);
         const rgb = hexToRgb(hexColor);
         
-        const imageBuffer = await generateFrameImage(word, hexColor, rgb);
+        // Generate AI color name
+        const colorName = await generateColorName(hexColor, word, rgb);
+        
+        const imageBuffer = await generateFrameImage(word, hexColor, rgb, colorName);
         
         res.setHeader('Content-Type', 'image/png');
         res.setHeader('Cache-Control', 'public, max-age=3600');
@@ -211,6 +301,39 @@ app.get('/api/frame-image/:word?', async (req, res) => {
     } catch (error) {
         console.error('Error generating image:', error);
         res.status(500).send('Error generating image');
+    }
+});
+
+// API endpoint for color name generation
+app.post('/api/color-name', async (req, res) => {
+    try {
+        const { word } = req.body;
+        
+        if (!word) {
+            return res.status(400).json({ error: 'Word is required' });
+        }
+        
+        const hash = hashString(word);
+        const hexColor = hashToColor(hash);
+        const rgb = hexToRgb(hexColor);
+        
+        // Generate AI color name
+        const colorName = await generateColorName(hexColor, word, rgb);
+        
+        res.json({ 
+            success: true, 
+            colorName: colorName,
+            word: word,
+            hexColor: hexColor,
+            rgb: rgb
+        });
+        
+    } catch (error) {
+        console.error('Error generating color name:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to generate color name' 
+        });
     }
 });
 

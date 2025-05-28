@@ -11,3 +11,15 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# IDE files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+
+# AWS deployment files (optional)
+# .elasticbeanstalk/

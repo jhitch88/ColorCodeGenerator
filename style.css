@@ -161,6 +161,34 @@ body {
     letter-spacing: 2px;
 }
 
+.color-name {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 10px;
+    padding: 8px 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.color-name.loading {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left-color: #ffc107;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.color-name.loaded {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    border-left-color: #17a2b8;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
 .color-values {
     display: flex;
     justify-content: space-around;
