@@ -196,7 +196,7 @@ async function callGeminiAPI(prompt) {
 
 // Generate a creative color name using Gemini AI
 async function generateColorName(hexColor, inputWord, rgb) {
-    const prompt = `Given this hex color ${hexColor} (RGB: ${rgb.r}, ${rgb.g}, ${rgb.b}) that was generated from the word "${inputWord}", create a single creative and poetic color name (1-2 words max). The name should capture the essence of both the color and the original word. Examples: "Midnight Ocean", "Coral Whisper", "Forest Echo". Only return the color name, nothing else.`;
+    const prompt = `Given this hex color ${hexColor} (RGB: ${rgb.r}, ${rgb.g}, ${rgb.b}) that was generated from the word "${inputWord}", create a single creative and poetic color name (1-2 words max). The name should capture the essence of both the color and the original word without using the original word at all. Examples: "Midnight Ocean", "Coral Whisper", "Forest Echo". Only return the color name, nothing else.`;
     
     const aiColorName = await callGeminiAPI(prompt);
     
