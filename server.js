@@ -37,9 +37,41 @@ function hashToColor(hash) {
     const g = (hash & 0x00FF00) >> 8;
     const b = hash & 0x0000FF;
     
-    const enhancedR = Math.max(30, Math.min(225, r));
-    const enhancedG = Math.max(30, Math.min(225, g));
-    const enhancedB = Math.max(30, Math.min(225, b));
+    let enhancedR = Math.max(30, Math.min(225, r));
+    let enhancedG = Math.max(30, Math.min(225, g));
+    let enhancedB = Math.max(30, Math.min(225, b));
+    
+    // Avoid muddy browns by enhancing color separation
+    // Browns typically have similar R, G, B values with R slightly higher
+    if (Math.abs(enhancedR - enhancedG) < 40 && Math.abs(enhancedG - enhancedB) < 40 && 
+        enhancedR > enhancedG && enhancedR > enhancedB && 
+        enhancedR < 160 && enhancedG < 120 && enhancedB < 100) {
+        
+        // Transform brown into a more vibrant color
+        const maxComponent = Math.max(enhancedR, enhancedG, enhancedB);
+        if (maxComponent === enhancedR) {
+            // Make it more red/orange
+            enhancedR = Math.min(225, enhancedR + 60);
+            enhancedG = Math.max(30, enhancedG - 20);
+        } else if (maxComponent === enhancedG) {
+            // Make it more green
+            enhancedG = Math.min(225, enhancedG + 60);
+            enhancedB = Math.max(30, enhancedB - 20);
+        } else {
+            // Make it more blue
+            enhancedB = Math.min(225, enhancedB + 60);
+            enhancedR = Math.max(30, enhancedR - 20);
+        }
+    }
+    
+    // Ensure at least one channel is vibrant for better colors
+    const maxVal = Math.max(enhancedR, enhancedG, enhancedB);
+    if (maxVal < 120) {
+        // Boost the dominant color
+        if (enhancedR === maxVal) enhancedR = Math.min(225, enhancedR + 80);
+        else if (enhancedG === maxVal) enhancedG = Math.min(225, enhancedG + 80);
+        else enhancedB = Math.min(225, enhancedB + 80);
+    }
     
     return `#${enhancedR.toString(16).padStart(2, '0')}${enhancedG.toString(16).padStart(2, '0')}${enhancedB.toString(16).padStart(2, '0')}`;
 }
@@ -351,12 +383,14 @@ app.post('/api/frame', async (req, res) => {
         switch (buttonIndex) {
             case 1: // Generate Color
                 action = 'generate';
-                break;
-            case 2: // Random
+                break;            case 2: // Random
                 const randomWords = [
                     'Cosmic', 'Nebula', 'Aurora', 'Phoenix', 'Mystic', 'Prism', 'Eclipse', 'Stellar',
                     'Velvet', 'Crystal', 'Thunder', 'Whisper', 'Ember', 'Frost', 'Sapphire', 'Crimson',
-                    'Lavender', 'Midnight', 'Golden', 'Silver', 'Copper', 'Jade', 'Ivory', 'Onyx'
+                    'Lavender', 'Midnight', 'Golden', 'Silver', 'Copper', 'Jade', 'Ivory', 'Onyx',
+                    'Azure', 'Coral', 'Indigo', 'Turquoise', 'Magenta', 'Violet', 'Lime', 'Teal',
+                    'Ruby', 'Emerald', 'Amber', 'Pearl', 'Opal', 'Quartz', 'Neon', 'Electric',
+                    'Vibrant', 'Radiant', 'Luminous', 'Brilliant', 'Dazzling', 'Gleaming'
                 ];
                 word = randomWords[Math.floor(Math.random() * randomWords.length)];
                 action = 'random';

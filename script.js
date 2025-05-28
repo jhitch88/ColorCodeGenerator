@@ -133,18 +133,43 @@ class ColorGenerator {
         }
         
         return Math.abs(hash);
-    }
-
-    hashToColor(hash) {
-        // Use multiple hash variations to get better color distribution
+    }    hashToColor(hash) {
         const r = (hash & 0xFF0000) >> 16;
         const g = (hash & 0x00FF00) >> 8;
         const b = hash & 0x0000FF;
         
-        // Enhance colors to avoid too dark/light colors
-        const enhancedR = Math.max(30, Math.min(225, r));
-        const enhancedG = Math.max(30, Math.min(225, g));
-        const enhancedB = Math.max(30, Math.min(225, b));
+        // Check if this is a muddy brown (similar RGB values with R slightly higher)
+        const avgRgb = (r + g + b) / 3;
+        const isBrown = (
+            Math.abs(r - g) < 30 && 
+            Math.abs(g - b) < 30 && 
+            Math.abs(r - b) < 30 &&
+            r > g && g >= b &&
+            avgRgb > 80 && avgRgb < 160
+        );
+        
+        let finalR = r;
+        let finalG = g;
+        let finalB = b;
+        
+        if (isBrown) {
+            // Transform brown to more vibrant color
+            finalR = (r + 100) % 256;
+            finalG = (g + 150) % 256;
+            finalB = (b + 200) % 256;
+        }
+        
+        // Ensure at least one channel is vibrant
+        const maxChannel = Math.max(finalR, finalG, finalB);
+        if (maxChannel < 120) {
+            if (finalR === maxChannel) finalR = Math.min(255, finalR + 60);
+            else if (finalG === maxChannel) finalG = Math.min(255, finalG + 60);
+            else finalB = Math.min(255, finalB + 60);
+        }
+        
+        const enhancedR = Math.max(30, Math.min(225, finalR));
+        const enhancedG = Math.max(30, Math.min(225, finalG));
+        const enhancedB = Math.max(30, Math.min(225, finalB));
         
         return `#${enhancedR.toString(16).padStart(2, '0')}${enhancedG.toString(16).padStart(2, '0')}${enhancedB.toString(16).padStart(2, '0')}`;
     }
@@ -254,14 +279,14 @@ class ColorGenerator {
         setTimeout(() => {
             button.classList.remove('copied');
         }, 1500);
-    }
-
-    generateRandom() {
+    }    generateRandom() {
         const randomWords = [
             'Cosmic', 'Nebula', 'Aurora', 'Phoenix', 'Mystic', 'Prism', 'Eclipse', 'Stellar',
             'Velvet', 'Crystal', 'Thunder', 'Whisper', 'Ember', 'Frost', 'Sapphire', 'Crimson',
             'Lavender', 'Midnight', 'Golden', 'Silver', 'Copper', 'Jade', 'Ivory', 'Onyx',
-            'Turquoise', 'Coral', 'Magenta', 'Indigo', 'Chartreuse', 'Vermillion'
+            'Azure', 'Coral', 'Indigo', 'Turquoise', 'Magenta', 'Violet', 'Lime', 'Teal',
+            'Ruby', 'Emerald', 'Amber', 'Pearl', 'Opal', 'Quartz', 'Neon', 'Electric',
+            'Vibrant', 'Radiant', 'Luminous', 'Brilliant', 'Dazzling', 'Gleaming'
         ];
         
         const randomWord = randomWords[Math.floor(Math.random() * randomWords.length)];
