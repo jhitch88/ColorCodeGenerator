@@ -13,119 +13,6 @@ Transform any word into a unique hex color! This project includes both a web int
 - **Copy to Clipboard**: Easy color code copying
 - **Responsive Design**: Works on desktop and mobile
 
-## 🚀 Quick Start
-
-### Local Development
-
-1. **Clone and install dependencies**:
-   ```bash
-   git clone <your-repo-url>
-   cd ColorCodeGenerator
-   npm install
-   ```
-
-2. **Set up environment variables** (optional for AI color names):
-   ```bash
-   cp .env.example .env
-   # Edit .env file and add your Gemini API key
-   ```
-
-3. **Start the server**:
-   ```bash
-   npm start
-   ```
-
-4. **Open in browser**:
-   - Web interface: `http://localhost:3003/index.html`
-   - Farcaster Frame: `http://localhost:3003`
-
-### Getting Gemini API Key
-
-1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Create a new API key
-4. Add it to your `.env` file as `GEMINI_API_KEY=your_api_key_here`
-
-## 🚀 AWS Deployment Options
-
-### Option 1: AWS App Runner (Recommended)
-
-AWS App Runner is the easiest way to deploy this application with automatic scaling and HTTPS.
-
-1. **Prepare your repository**:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git remote add origin <your-github-repo-url>
-   git push -u origin main
-   ```
-
-2. **Create App Runner Service**:
-   - Go to [AWS App Runner Console](https://console.aws.amazon.com/apprunner)
-   - Click "Create service"
-   - Choose "Source code repository"
-   - Connect your GitHub account and select your repository
-   - Choose branch: `main`
-
-3. **Configure Build Settings**:
-   - Runtime: `Node.js 18`
-   - Build command: `npm install`
-   - Start command: `npm start`
-   - Port: `3003`
-
-4. **Environment Variables** (optional):
-   - Add `GEMINI_API_KEY` for AI color names
-   - Add `PORT=3003` if needed
-
-5. **Deploy**: App Runner will build and deploy automatically
-
-### Option 2: AWS Elastic Beanstalk
-
-1. **Install EB CLI**:
-   ```bash
-   pip install awsebcli
-   ```
-
-2. **Initialize and Deploy**:
-   ```bash
-   eb init word-to-hex-generator --platform node.js --region us-east-1
-   eb create word-to-hex-frame
-   eb setenv GEMINI_API_KEY=your_api_key_here
-   eb deploy
-   ```
-
-### Option 3: AWS Lambda + API Gateway
-
-1. **Install Serverless Framework**:
-   ```bash
-   npm install -g serverless
-   npm install serverless-http
-   ```
-
-2. **Create serverless.yml**:
-   ```yaml
-   service: word-to-hex-frame
-   provider:
-     name: aws
-     runtime: nodejs18.x
-     environment:
-       GEMINI_API_KEY: ${env:GEMINI_API_KEY}
-   functions:
-     app:
-       handler: lambda.handler
-       events:
-         - http: ANY /
-         - http: 'ANY /{proxy+}'
-   ```
-
-3. **Create lambda.js wrapper**:
-   ```javascript
-   const serverless = require('serverless-http');
-   const app = require('./server');
-   module.exports.handler = serverless(app);
-   ```
-
 ### Post-Deployment Steps
 
 1. **Update Frame URLs**: Replace `localhost:3003` with your deployed URL in any hardcoded references
@@ -151,18 +38,20 @@ AWS App Runner is the easiest way to deploy this application with automatic scal
 - [X] Choose deployment method
 - [X] Configure environment variables if needed
 - [X] Update frame URLs after deployment
-- [X] Test in Farcaster client
+- [ ] Test in Farcaster client
 
 ## 📱 Farcaster Frame Testing URL
 
 **Frame URL for Farcaster**: `https://jnwh37f4xf.us-east-2.awsapprunner.com/`
 
+**Frame Preview URL (for testing in browser)**: `https://jnwh37f4xf.us-east-2.awsapprunner.com/frame.html`
+
 To test your Frame:
-1. Copy the URL above
-2. Create a new cast in Warpcast or your preferred Farcaster client
-3. Paste the URL in your cast
-4. Publish the cast
-5. Interact with the Frame buttons and input field
+1. **For Farcaster clients**: Copy the main URL and paste it in a Warpcast cast
+2. **For browser preview**: Use the `/frame.html` URL to see the fallback view
+3. Create a new cast in Warpcast or your preferred Farcaster client
+4. Paste the main URL in your cast
+5. Publish the cast and interact with the Frame buttons
 
 ## 🔧 Local Development
 
@@ -182,7 +71,7 @@ To test your Frame:
 
 After deployment, test your frame by:
 1. Copying your deployed URL
-2. Creating a cast in Warpcast with the URL
+2. Creating a cast in Farcaster with the URL
 3. Interacting with the frame buttons
 
 ## 🌐 Environment Variables
