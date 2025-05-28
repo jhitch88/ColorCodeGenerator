@@ -20,11 +20,13 @@ app.use(express.static('.'));
 
 // Color generation functions (same as client-side)
 function hashString(str) {
+    // Normalize to lowercase to ensure consistent colors regardless of case
+    const normalizedStr = str.toLowerCase();
     let hash = 0;
-    if (str.length === 0) return hash;
+    if (normalizedStr.length === 0) return hash;
     
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
+    for (let i = 0; i < normalizedStr.length; i++) {
+        const char = normalizedStr.charCodeAt(i);
         hash = ((hash << 5) - hash) + char;
         hash = hash & hash;
     }

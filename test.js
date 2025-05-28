@@ -2,11 +2,13 @@ const assert = require('assert');
 
 // Test color generation functions
 function hashString(str) {
+    // Normalize to lowercase to ensure consistent colors regardless of case
+    const normalizedStr = str.toLowerCase();
     let hash = 0;
-    if (str.length === 0) return hash;
+    if (normalizedStr.length === 0) return hash;
     
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
+    for (let i = 0; i < normalizedStr.length; i++) {
+        const char = normalizedStr.charCodeAt(i);
         hash = ((hash << 5) - hash) + char;
         hash = hash & hash;
     }
@@ -77,6 +79,27 @@ testWords.forEach(word => {
 });
 
 console.log('✅ Test 5 passed: Various input types work correctly');
+
+// Test 6: Case-insensitive color generation
+const testCases = [
+    ['Jimmy', 'jimmy', 'JIMMY', 'JImMy'],
+    ['Hello', 'hello', 'HELLO', 'HeLLo'],
+    ['World', 'world', 'WORLD', 'WoRlD']
+];
+
+testCases.forEach(caseVariations => {
+    const colors = caseVariations.map(word => hashToColor(hashString(word)));
+    const firstColor = colors[0];
+    
+    colors.forEach((color, index) => {
+        assert.strictEqual(color, firstColor, 
+            `"${caseVariations[index]}" should generate the same color as "${caseVariations[0]}"`);
+    });
+    
+    console.log(`  ✓ All variations of "${caseVariations[0]}" generate the same color: ${firstColor}`);
+});
+
+console.log('✅ Test 6 passed: Case-insensitive color generation works correctly');
 
 console.log('\n🎉 All tests passed! Color generator is working correctly.');
 console.log('\nExample colors:');
