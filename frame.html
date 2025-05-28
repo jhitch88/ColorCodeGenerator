@@ -40,11 +40,36 @@
                 <li>Save your personal hex code for clout</li>
             </ol>
         </div>
-        
-        <div class="demo-section">
+          <div class="demo-section">
             <h3>Try the web version:</h3>
             <a href="index.html" class="demo-link">Open Full App</a>
         </div>
     </div>
+
+    <!-- Farcaster Frame SDK -->
+    <script type="module">
+        import { sdk } from 'https://unpkg.com/@farcaster/frame-sdk@latest/dist/index.js';
+        
+        async function initializeFrame() {
+            try {
+                // Initialize the Farcaster Frame SDK
+                await sdk.actions.ready();
+                console.log('Farcaster Frame SDK initialized successfully');
+                
+                // Optional: Add frame-specific functionality here
+                // You can listen for frame events, handle interactions, etc.
+                
+            } catch (error) {
+                console.error('Failed to initialize Farcaster Frame SDK:', error);
+            }
+        }
+        
+        // Initialize when the page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeFrame);
+        } else {
+            initializeFrame();
+        }
+    </script>
 </body>
 </html>

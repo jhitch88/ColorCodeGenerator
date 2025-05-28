@@ -146,12 +146,23 @@ AWS App Runner is the easiest way to deploy this application with automatic scal
 
 ## 📋 Deployment Checklist
 
-- [ ] Push code to GitHub repository
-- [ ] Set up AWS account and credentials
-- [ ] Choose deployment method
-- [ ] Configure environment variables if needed
-- [ ] Update frame URLs after deployment
-- [ ] Test in Farcaster client (Warpcast)
+- [X] Push code to GitHub repository
+- [X] Set up AWS account and credentials
+- [X] Choose deployment method
+- [X] Configure environment variables if needed
+- [X] Update frame URLs after deployment
+- [X] Test in Farcaster client
+
+## 📱 Farcaster Frame Testing URL
+
+**Frame URL for Farcaster**: `https://jnwh37f4xf.us-east-2.awsapprunner.com/`
+
+To test your Frame:
+1. Copy the URL above
+2. Create a new cast in Warpcast or your preferred Farcaster client
+3. Paste the URL in your cast
+4. Publish the cast
+5. Interact with the Frame buttons and input field
 
 ## 🔧 Local Development
 

@@ -302,12 +302,37 @@ app.get('/', (req, res) => {
             <h3>Try the web version:</h3>
             <a href="index.html" class="demo-link">Open Full App</a>
         </div>
-        
-        <div class="farcaster-info">
+          <div class="farcaster-info">
             <h3>About Farcaster Frames</h3>
             <p>Farcaster Frames are interactive mini-apps that work directly in Farcaster clients like Warpcast. Share this URL in a Farcaster cast to let others interact with the color generator!</p>
         </div>
     </div>
+
+    <!-- Farcaster Frame SDK -->
+    <script type="module">
+        import { sdk } from 'https://unpkg.com/@farcaster/frame-sdk@latest/dist/index.js';
+        
+        async function initializeFrame() {
+            try {
+                // Initialize the Farcaster Frame SDK
+                await sdk.actions.ready();
+                console.log('Farcaster Frame SDK initialized successfully');
+                
+                // Optional: Add frame-specific functionality here
+                // You can listen for frame events, handle interactions, etc.
+                
+            } catch (error) {
+                console.error('Failed to initialize Farcaster Frame SDK:', error);
+            }
+        }
+        
+        // Initialize when the page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeFrame);
+        } else {
+            initializeFrame();
+        }
+    </script>
 </body>
 </html>`;
     
@@ -408,8 +433,7 @@ app.post('/api/frame', async (req, res) => {
         // Generate the frame image URL
         const baseUrl = getBaseUrl(req);
         const imageUrl = `${baseUrl}/api/frame-image/${encodeURIComponent(word)}`;
-        
-        // Return the frame response
+          // Return the frame response
         const frameHtml = `
         <!DOCTYPE html>
         <html>
@@ -432,6 +456,32 @@ app.post('/api/frame', async (req, res) => {
             <p>Word: ${word}</p>
             <p>Hex: ${hexColor}</p>
             <p>RGB: ${rgb.r}, ${rgb.g}, ${rgb.b}</p>
+            
+            <!-- Farcaster Frame SDK -->
+            <script type="module">
+                import { sdk } from 'https://unpkg.com/@farcaster/frame-sdk@latest/dist/index.js';
+                
+                async function initializeFrame() {
+                    try {
+                        // Initialize the Farcaster Frame SDK
+                        await sdk.actions.ready();
+                        console.log('Farcaster Frame SDK initialized successfully');
+                        
+                        // Optional: Add frame-specific functionality here
+                        // You can listen for frame events, handle interactions, etc.
+                        
+                    } catch (error) {
+                        console.error('Failed to initialize Farcaster Frame SDK:', error);
+                    }
+                }
+                
+                // Initialize when the page loads
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeFrame);
+                } else {
+                    initializeFrame();
+                }
+            </script>
         </body>
         </html>
         `;
