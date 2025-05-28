@@ -37,41 +37,38 @@ function hashToColor(hash) {
     const g = (hash & 0x00FF00) >> 8;
     const b = hash & 0x0000FF;
     
-    let enhancedR = Math.max(30, Math.min(225, r));
-    let enhancedG = Math.max(30, Math.min(225, g));
-    let enhancedB = Math.max(30, Math.min(225, b));
+    // Check if this is a muddy brown/dark color that needs enhancement
+    const avgRgb = (r + g + b) / 3;
+    const isBrownish = (
+        (Math.abs(r - g) < 50 && Math.abs(g - b) < 50 && r >= g && g >= b && avgRgb < 100) ||  // Broader brown detection
+        (r > g && g > b && Math.abs(r - g) < 40 && Math.abs(g - b) < 30 && avgRgb < 120)     // Classic brown pattern
+    );
     
-    // Avoid muddy browns by enhancing color separation
-    // Browns typically have similar R, G, B values with R slightly higher
-    if (Math.abs(enhancedR - enhancedG) < 40 && Math.abs(enhancedG - enhancedB) < 40 && 
-        enhancedR > enhancedG && enhancedR > enhancedB && 
-        enhancedR < 160 && enhancedG < 120 && enhancedB < 100) {
-        
-        // Transform brown into a more vibrant color
-        const maxComponent = Math.max(enhancedR, enhancedG, enhancedB);
-        if (maxComponent === enhancedR) {
-            // Make it more red/orange
-            enhancedR = Math.min(225, enhancedR + 60);
-            enhancedG = Math.max(30, enhancedG - 20);
-        } else if (maxComponent === enhancedG) {
-            // Make it more green
-            enhancedG = Math.min(225, enhancedG + 60);
-            enhancedB = Math.max(30, enhancedB - 20);
-        } else {
-            // Make it more blue
-            enhancedB = Math.min(225, enhancedB + 60);
-            enhancedR = Math.max(30, enhancedR - 20);
+    let finalR = r;
+    let finalG = g;
+    let finalB = b;
+    
+    if (isBrownish) {
+        // Transform brownish colors to more vibrant alternatives
+        if (r >= g && g >= b) {
+            // Transform to a blue-purple scheme to avoid brown entirely
+            finalR = (b + 100) % 256;
+            finalG = (r + 80) % 256;
+            finalB = (g + 180) % 256;
         }
     }
     
-    // Ensure at least one channel is vibrant for better colors
-    const maxVal = Math.max(enhancedR, enhancedG, enhancedB);
-    if (maxVal < 120) {
-        // Boost the dominant color
-        if (enhancedR === maxVal) enhancedR = Math.min(225, enhancedR + 80);
-        else if (enhancedG === maxVal) enhancedG = Math.min(225, enhancedG + 80);
-        else enhancedB = Math.min(225, enhancedB + 80);
+    // Ensure at least one channel is vibrant
+    const maxChannel = Math.max(finalR, finalG, finalB);
+    if (maxChannel < 120) {
+        if (finalR === maxChannel) finalR = Math.min(255, finalR + 80);
+        else if (finalG === maxChannel) finalG = Math.min(255, finalG + 80);
+        else finalB = Math.min(255, finalB + 80);
     }
+    
+    const enhancedR = Math.max(30, Math.min(225, finalR));
+    const enhancedG = Math.max(30, Math.min(225, finalG));
+    const enhancedB = Math.max(30, Math.min(225, finalB));
     
     return `#${enhancedR.toString(16).padStart(2, '0')}${enhancedG.toString(16).padStart(2, '0')}${enhancedB.toString(16).padStart(2, '0')}`;
 }

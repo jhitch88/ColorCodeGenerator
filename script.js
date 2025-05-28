@@ -138,33 +138,33 @@ class ColorGenerator {
         const g = (hash & 0x00FF00) >> 8;
         const b = hash & 0x0000FF;
         
-        // Check if this is a muddy brown (similar RGB values with R slightly higher)
+        // Check if this is a muddy brown/dark color that needs enhancement
         const avgRgb = (r + g + b) / 3;
-        const isBrown = (
-            Math.abs(r - g) < 30 && 
-            Math.abs(g - b) < 30 && 
-            Math.abs(r - b) < 30 &&
-            r > g && g >= b &&
-            avgRgb > 80 && avgRgb < 160
+        const isBrownish = (
+            (Math.abs(r - g) < 50 && Math.abs(g - b) < 50 && r >= g && g >= b && avgRgb < 100) ||  // Broader brown detection
+            (r > g && g > b && Math.abs(r - g) < 40 && Math.abs(g - b) < 30 && avgRgb < 120)     // Classic brown pattern
         );
         
         let finalR = r;
         let finalG = g;
         let finalB = b;
         
-        if (isBrown) {
-            // Transform brown to more vibrant color
-            finalR = (r + 100) % 256;
-            finalG = (g + 150) % 256;
-            finalB = (b + 200) % 256;
+        if (isBrownish) {
+            // Transform brownish colors to more vibrant alternatives
+            if (r >= g && g >= b) {
+                // Transform to a blue-purple scheme to avoid brown entirely
+                finalR = (b + 100) % 256;
+                finalG = (r + 80) % 256;
+                finalB = (g + 180) % 256;
+            }
         }
         
         // Ensure at least one channel is vibrant
         const maxChannel = Math.max(finalR, finalG, finalB);
         if (maxChannel < 120) {
-            if (finalR === maxChannel) finalR = Math.min(255, finalR + 60);
-            else if (finalG === maxChannel) finalG = Math.min(255, finalG + 60);
-            else finalB = Math.min(255, finalB + 60);
+            if (finalR === maxChannel) finalR = Math.min(255, finalR + 80);
+            else if (finalG === maxChannel) finalG = Math.min(255, finalG + 80);
+            else finalB = Math.min(255, finalB + 80);
         }
         
         const enhancedR = Math.max(30, Math.min(225, finalR));
